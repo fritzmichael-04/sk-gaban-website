@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin | SK Gaban</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body { background: var(--blue-50); }
+    .bar { background: var(--white); border-bottom: 1px solid var(--line); }
+    .bar .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .login { max-width: 380px; margin: 14vh auto 0; text-align: center; }
+    .login img { height: 72px; margin: 0 auto 16px; }
+    .login h1 { font-size: 1.4rem; color: var(--navy-900); margin: 0 0 20px; }
+    .tabs { display: flex; gap: 8px; margin: 28px 0 20px; flex-wrap: wrap; }
+    .tab { font: inherit; font-weight: 600; font-size: 0.9rem; padding: 9px 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--muted); cursor: pointer; }
+    .tab.active { background: var(--navy-900); color: var(--white); border-color: var(--navy-900); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .row { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .row:last-child { border-bottom: 0; }
+    .row h3 { margin: 0; font-size: 0.98rem; color: var(--navy-900); }
+    .row p { margin: 2px 0 0; font-size: 0.88rem; color: var(--muted); white-space: pre-line; }
+    .row .meta { font-size: 0.78rem; color: var(--blue-600); font-weight: 600; }
+    .actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .mini { font: inherit; font-size: 0.8rem; font-weight: 600; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--white); color: var(--navy-700); cursor: pointer; }
+    .mini:hover { background: var(--blue-50); }
+    .mini.danger { color: #b42318; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .stack { display: grid; gap: 24px; }
+    .linkbtn { background: none; border: 0; font: inherit; color: var(--blue-600); cursor: pointer; font-weight: 600; }
+    @media (max-width: 640px) { .two { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div id="loginView" class="wrap">
+  <form class="card login" id="loginForm">
+    <img src="/assets/logo.png" alt="SK Gaban logo">
+    <h1>Admin sign in</h1>
+    <label for="pw" class="sr-only">Password</label>
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password" required style="text-align:center">
+    <button class="btn btn-primary" type="submit" style="width:100%">Sign in</button>
+    <p class="status err" id="loginStatus" role="alert"></p>
+    <a href="/">← Back to site</a>
+  </form>
+</div>
+
+<div id="appView" hidden>
+  <div class="bar">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/assets/logo.png" alt=""><span>SK Gaban<small>Admin</small></span></a>
+      <button class="linkbtn" id="logoutBtn">Sign out</button>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-bottom:64px">
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="announcements">Announcements</button>
+      <button class="tab" data-tab="events">Events</button>
+      <button class="tab" data-tab="officials">Officials</button>
+      <button class="tab" data-tab="messages">Messages</button>
+    </div>
+
+    <div class="panel active stack" id="panel-announcements">
+      <form class="card" id="annForm">
+        <label for="annTitle">Title</label><input id="annTitle" maxlength="150" required>
+        <label for="annBody">Announcement</label><textarea id="annBody" maxlength="3000" required></textarea>
+        <button class="btn btn-primary" type="submit">Post announcement</button>
+      </form>
+      <div class="card" id="annList"></div>
+    </div>
+
+    <div class="panel stack" id="panel-events">
+      <form class="card" id="evForm">
+        <div class="two">
+          <div><label for="evTitle">Title</label><input id="evTitle" maxlength="150" required></div>
+          <div><label for="evDate">Date</label><input id="evDate" type="date" required></div>
+        </div>
+        <label for="evLoc">Location</label><input id="evLoc" maxlength="150">
+        <label for="evDesc">Description</label><textarea id="evDesc" maxlength="1000" style="min-height:80px"></textarea>
+        <button class="btn btn-primary" type="submit">Add event</button>
+      </form>
+      <div class="card" id="evList"></div>
+    </div>
+
+    <div class="panel stack" id="panel-officials">
+      <form class="card" id="offForm">
+        <input type="hidden" id="offId">
+        <div class="two">
+          <div><label for="offName">Name</label><input id="offName" maxlength="100" required></div>
+          <div><label for="offPos">Position</label><input id="offPos" maxlength="100" placeholder="e.g. SK Kagawad" required></div>
+        </div>
+        <label for="offCom">Committee</label><input id="offCom" maxlength="100" placeholder="e.g. Education">
+        <button class="btn btn-primary" type="submit" id="offSubmit">Add official</button>
+        <button class="btn btn-ghost" type="button" id="offCancel" hidden>Cancel edit</button>
+      </form>
+      <div class="card" id="offList"></div>
+    </div>
+
+    <div class="panel" id="panel-messages"><div class="card" id="msgList"></div></div>
+
+    <p class="status" id="appStatus" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<script>
+  // Safety net: if admin.js did not load (for example the file was opened
+  // directly instead of through the server), explain instead of doing nothing.
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (window.__adminReady) return;
+    document.getElementById('loginStatus').textContent = location.protocol === 'file:'
+      ? 'This page was opened as a file. Start the server with "npm start", then open http://localhost:8080/admin in your browser.'
+      : 'The page script did not load. Make sure the server is running, then refresh with Ctrl+F5.';
+  });
+</script>
+<script src="/admin.js"></script>
+</body>
+</html>
